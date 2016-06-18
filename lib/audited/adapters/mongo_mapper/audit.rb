@@ -29,7 +29,6 @@ module Audited
         key :version, Integer, :default => 0
         key :comment, String
         key :remote_address, String
-        key :request_uuid, String
         key :created_at, Time
 
         include Audited::Audit
