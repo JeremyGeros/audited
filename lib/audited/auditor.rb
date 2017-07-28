@@ -39,6 +39,7 @@ module Audited
         return if self.included_modules.include?(Audited::Auditor::AuditedInstanceMethods)
 
         class_attribute :non_audited_columns,   :instance_writer => false
+        class_attribute :destroy_non_audited_columns,   :instance_writer => false
         class_attribute :auditing_enabled,      :instance_writer => false
         class_attribute :audit_associated_with, :instance_writer => false
 
@@ -49,6 +50,7 @@ module Audited
           except |= Array(options[:except]).collect(&:to_s) if options[:except]
         end
         self.non_audited_columns = except
+        self.destroy_non_audited_columns = default_ignored_attributes + Audited.ignored_attributes
         self.audit_associated_with = options[:associated_with]
 
         if options[:comment_required]
@@ -133,6 +135,12 @@ module Audited
       def audited_attributes
         attributes.except(*non_audited_columns)
       end
+      
+      # List of attributes audited during destroy. This list is larger so we
+      # can reconstruct the complete state of a record.
+      def destroy_audited_attributes
+        attributes.except(*destroy_non_audited_columns)
+      end
 
       protected
 
@@ -200,7 +208,7 @@ module Audited
       end
 
       def audit_destroy
-        write_audit(:action => 'destroy', :audited_changes => audited_attributes,
+        write_audit(:action => 'destroy', :audited_changes => destroy_audited_attributes,
                     :comment => audit_comment) unless self.new_record?
       end
 
