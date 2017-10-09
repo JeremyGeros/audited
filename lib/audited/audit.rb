@@ -7,7 +7,7 @@ module Audited
 
     module ClassMethods
       def setup_audit
-        belongs_to :auditable,  :polymorphic => true
+        belongs_to :auditable,  :polymorphic => true, :inverse_of => :audits
         belongs_to :user,       :polymorphic => true
         belongs_to :associated, :polymorphic => true
 
