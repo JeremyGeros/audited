@@ -1,5 +1,6 @@
 Audited ChangeLog
 -------------------------------------------------------------------------------
+* 2017-10-09 - Include `inverse_of` on auditable associations [justinweiss]
 * 2017-07-27 - Don't exclude attributes when auditing destroys [k1w1]
 * 2012-04-10 - Add Audit scopes for creates, updates and destroys [chriswfx]
 * 2011-10-25 - Made ignored_attributes configurable [senny]
