@@ -196,14 +196,18 @@ module Audited
       end
 
       def audit_create
-        write_audit(:action => 'create', :audited_changes => audited_attributes,
-                    :comment => audit_comment)
+        if audited_attributes.key?('_upsert_created_record') && audited_attributes['_upsert_created_record'] == false
+          audit_update
+        else
+          write_audit(action: 'create', audited_changes: audited_attributes.except('_upsert_created_record'),
+                      comment: audit_comment)
+        end
       end
 
       def audit_update
         unless (changes = audited_changes).empty? && audit_comment.blank?
-          write_audit(:action => 'update', :audited_changes => changes,
-                      :comment => audit_comment)
+          write_audit(action: 'update', audited_changes: changes.except('_upsert_created_record'),
+                      comment: audit_comment)
         end
       end
 

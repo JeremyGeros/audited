@@ -51,6 +51,39 @@ describe Audited::Auditor, :adapter => :active_record do
     end
   end
 
+  describe "on upsert" do
+    context "when the record does not exist" do
+      let(:user) { upsert_user audit_comment: 'Create', id: 12001 }
+      it "should change the audit count" do
+        expect { user }.to change( Audited.audit_class, :count).by(1)
+      end
+
+      it "should set the action to create" do
+        expect(user.audits.first.action).to eq('create')
+        expect(user.audits.creates.count).to eq(1)
+        expect(user.audits.updates.count).to eq(0)
+        expect(user.audits.destroys.count).to eq(0)
+      end
+    end
+
+    context "when the record does exist" do
+      let!(:prior_user) { create_user audit_comment: 'Create' }
+      let(:user) { upsert_user audit_comment: 'Create', id: prior_user.id }
+
+      it "should change the audit count" do
+        expect { user }.to change( Audited.audit_class, :count).by(1)
+      end
+
+      it "should set the action to update" do
+        expect(user.audits.first.action).to eq('create')
+        expect(user.audits.last.action).to eq('update')
+        expect(user.audits.creates.count).to eq(1)
+        expect(user.audits.updates.count).to eq(1)
+        expect(user.audits.destroys.count).to eq(0)
+      end
+    end
+  end
+
   describe "on create" do
     let( :user ) { create_active_record_user :audit_comment => "Create" }
 
