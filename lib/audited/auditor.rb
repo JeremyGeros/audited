@@ -176,7 +176,7 @@ module Audited
 
       private
 
-      if Rails.version < 5.1
+      if Rails.version < "5.1"
         def audited_changes
           changed_attributes.except(*non_audited_columns).inject({}) do |changes, (attr, old_value)|
             changes[attr] = [old_value, self[attr]]
