@@ -1,11 +1,12 @@
 ENV['RAILS_ENV'] = 'test'
 
-require 'protected_attributes'
+# require 'protected_attributes'
 require 'rails_app/config/environment'
 require 'rspec/rails'
 require 'audited'
 require 'audited_spec_helpers'
 
+require "active_record_upsert"
 SPEC_ROOT = Pathname.new(File.expand_path('../', __FILE__))
 
 Dir[SPEC_ROOT.join('support/*.rb')].each{|f| require f }
@@ -20,4 +21,5 @@ RSpec.configure do |config|
   config.before(:each, :adapter => :mongo_mapper) do
     Audited.audit_class = Audited::Adapters::MongoMapper::Audit
   end
+  config.use_transactional_examples = true
 end

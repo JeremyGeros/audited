@@ -10,10 +10,18 @@ module AuditedSpecHelpers
     klass.new({:name => 'darth', :username => 'darth', :password => 'noooooooo'}.merge(attrs))
   end
 
+  def upsert_user(attrs = {})
+    raise "No ID given on upsert" unless attrs[:id]
+    record = Models::ActiveRecord::User.new({name: 'Brandon', username: 'brandon', password: 'password'}.merge(attrs))
+    record.upsert()
+  end
+
   def create_versions(n = 2, use_mongo = false)
     klass = use_mongo ? Models::MongoMapper::User : Models::ActiveRecord::User
 
     klass.create(:name => 'Foobar 1').tap do |u|
+
+    Models::ActiveRecord::User.create(name: 'Foobar 1').tap do |u|
       (n - 1).times do |i|
         u.update_attribute :name, "Foobar #{i + 2}"
       end

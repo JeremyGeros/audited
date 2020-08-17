@@ -21,4 +21,4 @@ mysql: &MYSQL
   database: audited_test
 
 test:
-  <<: *<%= ENV['DB'] || 'SQLITE3MEM' %>
+  <<: *<%= ENV['DB'] || 'POSTGRES' %>
