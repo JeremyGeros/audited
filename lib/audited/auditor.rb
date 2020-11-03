@@ -185,7 +185,13 @@ module Audited
         end
       else
         def audited_changes
-          saved_changes.transform_values(&:first).except(*non_audited_columns).inject({}) do |changes, (attr, old_value)|
+          # either we are in a after save callback or not.
+          change_list = if saved_changes.present?
+            saved_changes.transform_values(&:first)
+          else
+            changed_attributes
+          end
+          change_list.except(*non_audited_columns).inject({}) do |changes, (attr, old_value)|
             changes[attr] = [old_value, self[attr]]
             changes
           end
